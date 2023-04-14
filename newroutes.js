@@ -20,7 +20,6 @@ const requestHandler = (req, res) => {
                 </html>`);
         return res.end();
     }
-
     if (req.url == '/message' && req.method == 'POST') {
         let body = [];
         req.on('data', chunk => body.push(chunk));
