@@ -1,5 +1,3 @@
-const http = require('http');
-
 // can bring this code from the Express Website
 const express = require('express');
 const app = express();
@@ -17,6 +15,4 @@ app.use((req, res, next) => {
     // otherwise we would have to write the .write or .read etc.
 });
 
-const server = http.createServer(app);
-
-server.listen(port, () => console.log(`Express app listening on port ${port}`));
+app.listen(port, () => console.log(`Express app listening on port ${port}`));
