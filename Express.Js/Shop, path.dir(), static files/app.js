@@ -20,7 +20,7 @@ app.use(shopRoutes);
 app.use(contactRoutes);
 
 // isko success.html wali file bhejo jo ki views me hain
-app.use((req, res, next) => {
+app.use('/success', req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'success.html'))
 });
 
