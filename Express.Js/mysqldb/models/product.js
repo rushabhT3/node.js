@@ -1,35 +1,32 @@
-const db = require('../util/database');
-const Cart = require('./cart');
-
-module.exports = class Product {
-  constructor(id, title, imageUrl, description, price) {
-    this.id = id;
-    this.title = title;
-    this.imageUrl = imageUrl;
-    this.description = description;
-    this.price = price;
+// Class dega isliye capital 'S'
+const Sequelize = require('sequelize');
+// jo util/database me se export kiya vo yaha pr use hoga 
+const sequelize = require('../util/database');
+// Product is the model where 'product' is the name and 2nd parameter is the structure of it
+const Product = sequelize.define('product', {
+  id: {
+    // ! Sequelize is the capital below
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  title: Sequelize.STRING,
+  price: {
+    type: Sequelize.DOUBLE,
+    allowNull: false
+  },
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false
   }
+});
 
-  save() {
-    // jo hisaab se database me likha hain vahi hisaab se title, price etc. ko () me likho
-    return db.execute(
-      // using the ? and the [] is the way of mysql to provide the extra layer of security
-      'INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)',
-      [this.title, this.price, this.description, this.imageUrl])
-  }
+// the const Product where the model is defined will be exported
+module.exports = Product;
 
-  static deleteById(id) {
-    return db.execute(
-      'DELETE FROM products WHERE products.id = ?',
-      [id]
-    );
-  }
-
-  static fetchAll() {
-    return db.execute('SELECT * FROM products');
-  }
-
-  static findById(id) {
-    return db.execute('SELECT * FROM products WHERE products.id = ?', [id]);
-  }
-};
+// This code is defining a Product model using the Sequelize library. The model has an id, title, price, imageUrl, and description fields. The id field is the primary key and is set to auto-increment. The price, imageUrl, and description fields are not allowed to be null. The model is then exported for use in other parts of the application.
