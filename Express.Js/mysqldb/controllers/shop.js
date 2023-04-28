@@ -2,25 +2,36 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getProducts = (req, res, next) => {
-	Product.fetchAll()
-		// ! Destructuring is used:
-		.then(([rows, fieldData]) => {
+	Product.findAll()
+		.then(products => {
 			res.render('shop/product-list', {
-				prods: rows,
+				prods: products,
 				pageTitle: 'All Products',
 				path: '/products'
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			console.log(err);
+		});
 };
 
 exports.getProduct = (req, res, next) => {
 	const prodId = req.params.productId;
-	Product.findById(prodId)
-		.then(([product]) => {
+	// ! by .findAll we get the array and it is the method by the sequelize for the Product model
+	// Product.findAll({ where: { id: prodId } })
+	//   .then(products => {
+	//     res.render('shop/product-detail', {
+	//       product: products[0],
+	//       pageTitle: products[0].title,
+	//       path: '/products'
+	//     });
+	//   })
+	//   .catch(err => console.log(err));
+	// ! can also use the .findByPk .findById is not available now
+	Product.findByPk(prodId)
+		.then(product => {
 			res.render('shop/product-detail', {
-				// even though single element in an array; views expect a single object not object in array
-				product: product[0],
+				product: product,
 				pageTitle: product.title,
 				path: '/products'
 			});
@@ -29,17 +40,18 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-	Product.fetchAll()
-		// ! Destructuring is used: here we retrieved data's parts: 1st and the 2nd value:
-		// ! jo rows and fieldData me jaayegi
-		.then(([rows, fieldData]) => {
+	// Product is the model borne out of the database
+	Product.findAll()
+		.then(products => {
 			res.render('shop/index', {
-				prods: rows,
+				prods: products,
 				pageTitle: 'Shop',
 				path: '/'
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			console.log(err);
+		});
 };
 
 exports.getCart = (req, res, next) => {
@@ -65,7 +77,7 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
 	const prodId = req.body.productId;
-	Product.findById(prodId, product => {
+	Product.findByPk(prodId, product => {
 		Cart.addProduct(prodId, product.price);
 	});
 	res.redirect('/cart');
@@ -73,7 +85,7 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
 	const prodId = req.body.productId;
-	Product.findById(prodId, product => {
+	Product.findByPk(prodId, product => {
 		Cart.deleteProduct(prodId, product.price);
 		res.redirect('/cart');
 	});
