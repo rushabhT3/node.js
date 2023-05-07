@@ -17,6 +17,7 @@ async function onsignup(event) {
         myObj
       );
       console.log(response);
+      event.target.reset(); // Reset the form after the submission
       onScreenFunction(response.data);
     } catch (error) {
       console.error(error);
@@ -34,7 +35,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error(err);
   }
 });
-// this myObj is different from the above code
 async function onScreenFunction(upprWala) {
   const ul = document.getElementById("listOnScreen");
 
