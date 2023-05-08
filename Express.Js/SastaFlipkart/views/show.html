@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant</title>
+</head>
+
+<body>
+    <form action="#" method="post" onsubmit="onSignUp(event)">
+        <label for="Name">Enter Name:</label>
+        <input type="text" name="Name" id="Name" placeholder="Enter your Name">
+        <label for="Category">Options:</label>
+        <select name="Category" id="Category">
+            <option>Chinese</option>
+            <option>Thai</option>
+            <option>Continental</option>
+        </select>
+        <input type="submit" value="Order">
+    </form>
+    <ul id="onScreenList">
+        
+    </ul>
+</body>
+    <script src="show.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+
+</html>
