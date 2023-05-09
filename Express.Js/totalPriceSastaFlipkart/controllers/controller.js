@@ -6,8 +6,8 @@ exports.getItems = async (req, res) => {
 };
 
 exports.createItem = async (req, res) => {
-  const { name, category, price } = req.body;
-  const x = await Item.create({ name, category, price });
+  const { name, price } = req.body;
+  const x = await Item.create({ name, price });
   res.send(x);
 };
 
