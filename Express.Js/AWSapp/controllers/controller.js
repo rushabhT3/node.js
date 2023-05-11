@@ -19,6 +19,12 @@ exports.signUp = async (req, res) => {
   }
 };
 
+// exports.login = async (req, res) => {
+//   const { email, password } = req.body;
+//   const foundUser = await User.findOne({ where: { email, password } });
+//   if (foundUser) res.status(201).json({ message: "Successfully Signed In" });
+// };
+
 exports.random = async (req, res) => {
   res.send("hi this is random");
 };
