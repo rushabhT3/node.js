@@ -1,1 +1,1 @@
-# FrontEnd html, css and the JS part comes here
+# FrontEnd: html, css, JS comes here
