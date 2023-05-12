@@ -13,6 +13,7 @@ async function onSignUp(event) {
       "http://localhost:3000/user/signup",
       signUpDetails
     );
+    event.target.reset();
     if (response.status === 201) {
       //window.location.href can also be used to change the URL of the current web page by assigning a new value to it.
       window.location.href = "../login/login.html";

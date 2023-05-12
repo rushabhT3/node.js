@@ -19,11 +19,26 @@ exports.signUp = async (req, res) => {
   }
 };
 
-// exports.login = async (req, res) => {
-//   const { email, password } = req.body;
-//   const foundUser = await User.findOne({ where: { email, password } });
-//   if (foundUser) res.status(201).json({ message: "Successfully Signed In" });
-// };
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const foundUser = await User.findOne({ where: { email } });
+    if (foundUser) {
+      if (foundUser.password == password) {
+        res.status(200).json({ message: "Successfully Logged In" });
+      } else {
+        res.status(401).json({ message: "User not authorized" });
+      }
+    } else {
+      // Redirect the user to the signup page
+      // res.redirect("../public/signUp/signUp.html");
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.log("login error");
+    res.status(500).json({ message: error });
+  }
+};
 
 exports.random = async (req, res) => {
   res.send("hi this is random");

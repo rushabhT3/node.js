@@ -11,13 +11,15 @@ async function login(event) {
       "http://localhost:3000/user/login",
       loginDetails
     );
-    if (response.status === 200) {
-      alert(response.data.message);
-    } else {
-      throw new Error(response.data.message);
-    }
+    alert(response.data.message);
+    event.target.reset();
+    // if (response.status === 404) {
+    //   console.log("ddsfd");
+    //window.location.href can also be used to change the URL of the current web page by assigning a new value to it.
+    // }
   } catch (error) {
     console.log(JSON.stringify(error));
     document.body.innerHTML += `<div style="color:red">${error.message}</div>`;
+    // window.location.href = "../signUp/signUp.html";
   }
 }
