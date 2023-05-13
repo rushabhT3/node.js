@@ -4,6 +4,7 @@ const port = 3000;
 
 const routes = require("./routes/router");
 const { sequelize, User } = require("./models/database");
+const { sequelize2, dailyExpense } = require("./models/expense");
 
 const app = express();
 
@@ -18,3 +19,4 @@ sequelize.sync().then(
     console.log(`listening on port: ${port}`);
   })
 );
+sequelize2.sync();

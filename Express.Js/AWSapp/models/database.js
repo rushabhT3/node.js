@@ -7,9 +7,9 @@ const sequelize = new Sequelize("premiumexpense", "root", "qwertY@1", {
 const User = sequelize.define("User", {
   id: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    allowNull: false,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
   },
   name: {
     type: DataTypes.STRING,
