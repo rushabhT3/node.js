@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 
-const { sequelize, User } = require("../models/database");
-const { sequelize2, dailyExpense } = require("../models/expense");
+const User = require("../models/users");
+const dailyExpense = require("../models/expense");
 
 exports.signUp = async (req, res) => {
   // const { name, email, password } = req.body;
