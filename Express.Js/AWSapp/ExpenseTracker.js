@@ -16,6 +16,9 @@ app.use(cors());
 
 app.use("/", routes);
 
+User.hasMany(dailyExpense);
+dailyExpense.belongsTo(User);
+
 sequelize.sync().then(
   app.listen(port, () => {
     console.log(`listening on port: ${port}`);

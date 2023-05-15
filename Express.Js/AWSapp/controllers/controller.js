@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/users");
 const dailyExpense = require("../models/expense");
@@ -24,6 +25,10 @@ exports.signUp = async (req, res) => {
   }
 };
 
+generateAccessToken = (id) => {
+  return jwt.sign({ userId: id, name: "rushabh" }, "secretkey");
+};
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -33,7 +38,10 @@ exports.login = async (req, res) => {
       bcrypt.compare(password, foundUser.password, (error, result) => {
         if (result) {
           // console.log(foundUser);
-          res.status(200).json({ message: "Successfully Logged In" });
+          res.status(200).json({
+            message: "Successfully Logged In",
+            token: generateAccessToken(foundUser.id),
+          });
         } else {
           res.json({ message: "Password is wrong" });
         }
@@ -57,6 +65,7 @@ exports.postdailyExpense = async (req, res) => {
       amount,
       description,
       category,
+      UserId: req.foundUser.id,
     });
     // ? sent response here
     res.json(response);
@@ -66,17 +75,33 @@ exports.postdailyExpense = async (req, res) => {
 };
 
 exports.getdailyExpense = async (req, res) => {
-  const response = await dailyExpense.findAll();
-  res.json(response);
+  try {
+    const response = await dailyExpense.findAll({
+      where: { UserId: req.foundUser.id },
+    });
+    res.json(response);
+  } catch (error) {
+    console.log("error in getdailyexpense controller");
+  }
 };
 
 exports.deleteExpense = async (req, res) => {
   try {
-    // pick id from the table not from the request
-    const { id } = await dailyExpense.findOne();
-    dailyExpense.destroy({ where: { id } });
+    // ? params are used to retrieve data from the URL, while body is used to retrieve data from the request.
+    // ? The .query method is used to retrieve data from the query string
+    const { id } = req.params;
+    const expense = await dailyExpense.findOne({
+      where: { id: id, UserId: req.foundUser.id },
+    });
+    if (expense) {
+      await expense.destroy();
+      res.json({ message: "Expense deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Expense not found" });
+    }
   } catch (error) {
-    console.log("deleteExpense Controller problem", error);
+    console.log("deleteExpense Controller problem");
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

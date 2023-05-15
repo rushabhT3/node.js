@@ -2,13 +2,26 @@ const express = require("express");
 const router = express.Router();
 
 const controller = require("../controllers/controller");
+const userauthentication = require("../middlewares/auth");
 
 router.post("/user/signup", controller.signUp);
 router.post("/user/login", controller.login);
 
-router.get("/dailyExpense", controller.getdailyExpense);
-router.post("/dailyExpense", controller.postdailyExpense);
-router.delete("/deleteExpense/:id", controller.deleteExpense);
+router.get(
+  "/dailyExpense",
+  userauthentication.authenticate,
+  controller.getdailyExpense
+);
+router.post(
+  "/dailyExpense",
+  userauthentication.authenticate,
+  controller.postdailyExpense
+);
+router.delete(
+  "/deleteExpense/:id",
+  userauthentication.authenticate,
+  controller.deleteExpense
+);
 
 router.get("/random", controller.random);
 
