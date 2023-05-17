@@ -25,8 +25,12 @@ exports.signUp = async (req, res) => {
   }
 };
 
-generateAccessToken = (id) => {
-  return jwt.sign({ userId: id, name: "rushabh" }, "secretkey");
+generateAccessToken = (id, name, ispremiumuser) => {
+  return jwt.sign({ jwtId: id, name: name, ispremiumuser }, "secretkey2");
+};
+
+exports.generateAccessToken = (id, name, ispremiumuser) => {
+  return jwt.sign({ jwtId: id, name: name, ispremiumuser }, "secretkey2");
 };
 
 exports.login = async (req, res) => {
@@ -47,8 +51,6 @@ exports.login = async (req, res) => {
         }
       });
     } else {
-      // Redirect the user to the signup page
-      // res.redirect("../public/signUp/signUp.html");
       res.json({ message: "User not found in table" });
     }
   } catch (error) {
@@ -65,7 +67,7 @@ exports.postdailyExpense = async (req, res) => {
       amount,
       description,
       category,
-      UserId: req.foundUser.id,
+      UserId: req.authUser.id,
     });
     // ? sent response here
     res.json(response);
@@ -77,7 +79,7 @@ exports.postdailyExpense = async (req, res) => {
 exports.getdailyExpense = async (req, res) => {
   try {
     const response = await dailyExpense.findAll({
-      where: { UserId: req.foundUser.id },
+      where: { UserId: req.authUser.id },
     });
     res.json(response);
   } catch (error) {
@@ -91,7 +93,7 @@ exports.deleteExpense = async (req, res) => {
     // ? The .query method is used to retrieve data from the query string
     const { id } = req.params;
     const expense = await dailyExpense.findOne({
-      where: { id: id, UserId: req.foundUser.id },
+      where: { id: id, UserId: req.authUser.id },
     });
     if (expense) {
       await expense.destroy();
