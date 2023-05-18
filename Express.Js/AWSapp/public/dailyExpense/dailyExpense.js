@@ -1,17 +1,34 @@
+function parseJwt(token) {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+  return JSON.parse(jsonPayload);
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const token = localStorage.getItem("token");
   const decodeToken = parseJwt(token);
   // console.log(decodeToken);
-  const ispremiumuser = decodeToken.ispremiumuser;
-  if (ispremiumuser) {
-    showPremiumuserMessage();
-  }
   const response = await axios.get("http://localhost:3000/dailyExpense", {
     headers: { Authorization: token },
   });
   response.data.forEach((element) => {
     onScreenFunction(element);
   });
+  const ispremiumuser = decodeToken.ispremiumuser;
+  // console.log({ decodeToken, ispremiumuser });
+  if (ispremiumuser) {
+    showPremiumuserMessage();
+    showLeaderboard();
+  }
 });
 
 async function dailyExpense(event) {
@@ -40,24 +57,44 @@ function showPremiumuserMessage() {
   crownIcon.classList.add("fas", "fa-crown");
   crownIcon.style.marginLeft = "5px";
 
-  button.innerHTML = ""; // Clear existing content
+  button.innerHTML = ""; // Clear existing content.
   button.appendChild(text);
   button.appendChild(crownIcon);
+
+  // Remove event listener
+  button.onclick = null;
 }
 
-function parseJwt(token) {
-  var base64Url = token.split(".")[1];
-  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  var jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split("")
-      .map(function (c) {
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join("")
-  );
-  return JSON.parse(jsonPayload);
+function showLeaderboard() {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = "Show Leaderboard";
+  button.addEventListener("click", handleLeaderboardClick);
+
+  const ldrBtn = document.getElementById("leaderboard");
+  ldrBtn.appendChild(button);
+}
+
+async function handleLeaderboardClick() {
+  try {
+    const token = localStorage.getItem("token");
+    const userLeaderBoardArray = await axios.get(
+      "http://localhost:3000/premium/showLeaderBoard",
+      { headers: { Authorization: token } }
+    );
+    console.log({ FE: "showleaderboard" });
+    // console.log({userLeaderBoardArray});
+
+    const leaderboardElem = document.getElementById("leaderboard");
+    leaderboardElem.innerHTML = "<h1>Leader Board</h1>";
+    userLeaderBoardArray.data.forEach((userDetails) => {
+      leaderboardElem.innerHTML += `<li>Name - ${
+        userDetails.name
+      } Total Expense - ${userDetails.total_cost || 0}</li>`;
+    });
+  } catch (error) {
+    console.log("Error fetching leaderboard data:", error);
+  }
 }
 
 async function onScreenFunction(expense) {
@@ -98,11 +135,11 @@ document.getElementById("rzp-button1").onclick = async function (e) {
     );
     console.log(response.data);
     var options = {
-      key: "rzp_test_DJI5gux7MxzZn9", // Enter the Key ID generated from the Dashboard
+      key: "rzp_test_G2AoKx84GaRplj", // Enter the Key ID generated from the Dashboard
       order_id: response.data.order.id, // For one time payment
       description: "Laxmi chit fund",
       image:
-        "https://1000logos.net/wp-content/uploads/2021/05/Dolby-Digital-logo-500x281.png",
+        "https://getmemetemplates.com/wp-content/uploads/2020/01/20200114_112012-1-1226x584.jpg",
       prefill: {
         email: "gaurav.kumar@ekkadouble.com",
         contact: +919900000000,
@@ -159,8 +196,7 @@ document.getElementById("rzp-button1").onclick = async function (e) {
           { headers: { Authorization: token } }
         );
         alert("You are a Premium User now! Congrats:)");
-        // document.getElementById("rzp-button1").style.visibility = "hidden";
-        // document.getElementById("message").innerHTML = "Premium User";
+        // console.log({ responseData: res.data, token });
         localStorage.setItem("token", res.data.token);
         console.log(localStorage.getItem("token"));
       },
@@ -180,6 +216,7 @@ document.getElementById("rzp-button1").onclick = async function (e) {
     rzp1.open();
     e.preventDefault();
     showPremiumuserMessage();
+    showLeaderboard();
   } catch (error) {
     console.log("problem in the dailyExpenseJs");
   }

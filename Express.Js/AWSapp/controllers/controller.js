@@ -41,10 +41,14 @@ exports.login = async (req, res) => {
       // ? compare with the hash with the non hash value and callback me error k baad result hain and result != res
       bcrypt.compare(password, foundUser.password, (error, result) => {
         if (result) {
-          // console.log(foundUser);
+          // console.log({ foundUser });
           res.status(200).json({
             message: "Successfully Logged In",
-            token: generateAccessToken(foundUser.id),
+            token: generateAccessToken(
+              foundUser.id,
+              foundUser.name,
+              foundUser.ispremiumuser
+            ),
           });
         } else {
           res.json({ message: "Password is wrong" });

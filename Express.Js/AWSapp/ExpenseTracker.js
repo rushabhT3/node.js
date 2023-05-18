@@ -4,6 +4,7 @@ const port = 3000;
 
 const routes = require("./routes/router");
 const purchaseRoutes = require("./routes/razorpayroutes");
+const premiumFeatureRoutes = require("./routes/premiumFeature");
 
 const sequelize = require("./util/database");
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/purchase", purchaseRoutes);
+app.use("/premium", premiumFeatureRoutes);
 app.use("/", routes);
 
 User.hasMany(dailyExpense);

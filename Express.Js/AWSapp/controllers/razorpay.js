@@ -35,7 +35,7 @@ const updateTransactionStatus = async (req, res) => {
   try {
     const userId = req.authUser.id;
     const { payment_id, order_id } = req.body;
-    console.log({ payment_id, order_id });
+    // console.log({ payment_id, order_id });
     const order = await Order.findOne({ where: { orderid: order_id } });
     const promise1 = order.update({
       paymentid: payment_id,
@@ -50,7 +50,7 @@ const updateTransactionStatus = async (req, res) => {
       return res.status(202).json({
         sucess: true,
         message: "Transaction Successful",
-        token: controller.generateAccessToken(userId, undefined, true),
+        token: controller.generateAccessToken(userId, undefined, ispremiumuser),
       });
     });
     // .catch((error) => {
