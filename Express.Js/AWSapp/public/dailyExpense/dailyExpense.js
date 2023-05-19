@@ -125,10 +125,10 @@ async function onScreenFunction(expense) {
   delBtn.appendChild(icon);
 
   delBtn.onclick = async () => {
-    ul2.removeChild(li);
     await axios.delete(`http://localhost:3000/deleteExpense/${expense.id}`, {
       headers: { Authorization: token },
     });
+    ul2.removeChild(li);
   };
 
   li.appendChild(delBtn);

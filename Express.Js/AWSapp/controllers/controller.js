@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const sequelize = require("../util/database");
+
 const User = require("../models/users");
 const dailyExpense = require("../models/expense");
 
@@ -64,28 +66,39 @@ exports.login = async (req, res) => {
 };
 
 exports.postdailyExpense = async (req, res) => {
+  // ! sequelize transaction basically checkpost jaisa sequelize hamara database util me se
+  // ? const t try k bahar hoga nhi toh error me usko access ni kr paayenge
+  const t = await sequelize.transaction();
+
   try {
     const { amount, description, category } = req.body;
-    // console.log(req.body);
-    const response = await dailyExpense.create({
-      amount,
-      description,
-      category,
-      UserId: req.authUser.id,
-    });
+    const response = await dailyExpense.create(
+      {
+        amount,
+        description,
+        category,
+        UserId: req.authUser.id,
+      },
+      { transaction: t } // ? Pass the transaction to the create method
+    );
+
     const total_cost = Number(req.authUser.total_cost) + Number(amount);
-    User.update(
+    await User.update(
       {
         total_cost: total_cost,
       },
       {
         where: { id: req.authUser.id },
+        transaction: t, // ? Pass the transaction to the update method
       }
     );
-    // ? sent response here
+
+    await t.commit(); // ? Commit the transaction
+
     res.json(response);
   } catch (error) {
-    console.log("error in controller post expense");
+    await t.rollback(); // Rollback the transaction in case of an error
+    return res.status(500).json({ "Error in controller post expense": error });
   }
 };
 
@@ -101,12 +114,14 @@ exports.getdailyExpense = async (req, res) => {
 };
 
 exports.deleteExpense = async (req, res) => {
+  const t = await sequelize.transaction();
   try {
     // ? params are used to retrieve data from the URL, while body is used to retrieve data from the request.
     // ? The .query method is used to retrieve data from the query string
     const { id } = req.params;
     const expense = await dailyExpense.findOne({
       where: { id: id, UserId: req.authUser.id },
+      transaction: t,
     });
     if (expense) {
       await expense.destroy();
@@ -115,17 +130,21 @@ exports.deleteExpense = async (req, res) => {
       await User.update(
         {
           total_cost: total_cost,
+          transaction: t,
         },
         {
           where: { id: req.authUser.id },
+          transaction: t,
         }
       );
+      await t.commit();
       res.json({ message: "Expense deleted successfully" });
     } else {
       res.status(404).json({ message: "Expense not found" });
     }
   } catch (error) {
-    console.log("deleteExpense Controller problem");
+    await t.rollback();
+    // console.log("deleteExpense Controller problem");
     res.status(500).json({ message: "Internal server error" });
   }
 };
