@@ -73,6 +73,15 @@ exports.postdailyExpense = async (req, res) => {
       category,
       UserId: req.authUser.id,
     });
+    const total_cost = Number(req.authUser.total_cost) + Number(amount);
+    User.update(
+      {
+        total_cost: total_cost,
+      },
+      {
+        where: { id: req.authUser.id },
+      }
+    );
     // ? sent response here
     res.json(response);
   } catch (error) {
@@ -101,6 +110,16 @@ exports.deleteExpense = async (req, res) => {
     });
     if (expense) {
       await expense.destroy();
+      const total_cost =
+        Number(req.authUser.total_cost) - Number(expense.amount);
+      await User.update(
+        {
+          total_cost: total_cost,
+        },
+        {
+          where: { id: req.authUser.id },
+        }
+      );
       res.json({ message: "Expense deleted successfully" });
     } else {
       res.status(404).json({ message: "Expense not found" });

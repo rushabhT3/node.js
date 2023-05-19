@@ -78,20 +78,29 @@ function showLeaderboard() {
 async function handleLeaderboardClick() {
   try {
     const token = localStorage.getItem("token");
-    const userLeaderBoardArray = await axios.get(
+    const leaderBoardBEData = await axios.get(
       "http://localhost:3000/premium/showLeaderBoard",
       { headers: { Authorization: token } }
     );
-    console.log({ FE: "showleaderboard" });
-    // console.log({userLeaderBoardArray});
+    const leaderboardHtml = document.getElementById("leaderboard");
 
-    const leaderboardElem = document.getElementById("leaderboard");
-    leaderboardElem.innerHTML = "<h1>Leader Board</h1>";
-    userLeaderBoardArray.data.forEach((userDetails) => {
-      leaderboardElem.innerHTML += `<li>Name - ${
-        userDetails.name
-      } Total Expense - ${userDetails.total_cost || 0}</li>`;
+    // ? check kr rhe leaderbrd list hain ya nahi
+    const leaderboardList = document.getElementById("leaderboardList");
+    if (leaderboardList) {
+      leaderboardHtml.removeChild(leaderboardList);
+    }
+
+    // ? nahi hain toh bana rhe and uppr me existing check kr rhe jo yaha pr bani hogi
+    const newLeaderboardList = document.createElement("ul");
+    newLeaderboardList.setAttribute("id", "leaderboardList");
+    newLeaderboardList.innerHTML = "<h1>Leader Board</h1>";
+
+    leaderBoardBEData.data.forEach((element) => {
+      newLeaderboardList.innerHTML += `<li>Name - ${
+        element.name
+      }     Total Expense - ${element.total_cost || 0}</li>`;
     });
+    leaderboardHtml.appendChild(newLeaderboardList);
   } catch (error) {
     console.log("Error fetching leaderboard data:", error);
   }
@@ -135,7 +144,7 @@ document.getElementById("rzp-button1").onclick = async function (e) {
     );
     console.log(response.data);
     var options = {
-      key: "rzp_test_G2AoKx84GaRplj", // Enter the Key ID generated from the Dashboard
+      key: response.data.key_id, // Enter the Key ID generated from the Dashboard
       order_id: response.data.order.id, // For one time payment
       description: "Laxmi chit fund",
       image:
