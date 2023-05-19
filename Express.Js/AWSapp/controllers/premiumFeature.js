@@ -5,29 +5,25 @@ const express = require("express");
 
 const getUserLeaderBoard = async (req, res) => {
   try {
-    const users = await User.findAll({
-      attributes: ["id", "name"],
-    });
-
-    const expenses = await dailyExpense.findAll({
+    const leaderBoardDetails = await User.findAll({
       attributes: [
-        "UserId",
-        [sequelize.fn("sum", sequelize.col("amount")), "total_amount"],
+        "id",
+        "name",
+        [
+          sequelize.fn("SUM", sequelize.col("dailyExpenses.amount")),
+          "total_cost",
+        ],
       ],
-      group: ["UserId"],
+      include: [
+        {
+          model: dailyExpense,
+          attributes: [],
+        },
+      ],
+      group: ["User.id"],
+      order: [["total_cost", "DESC"]],
     });
 
-    const userCumExpenses = {};
-    expenses.forEach((element) => {
-      userCumExpenses[element.UserId] = element.dataValues.total_amount;
-    });
-
-    const leaderBoardDetails = users.map((element) => ({
-      name: element.name,
-      total_cost: userCumExpenses[element.id] || 0,
-    }));
-
-    leaderBoardDetails.sort((a, b) => b.total_cost - a.total_cost);
     res.status(200).json(leaderBoardDetails);
   } catch (err) {
     console.log({ "BE premiumfeature controller": err });
