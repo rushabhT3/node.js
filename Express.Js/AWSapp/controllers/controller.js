@@ -151,7 +151,9 @@ exports.deleteExpense = async (req, res) => {
 
 exports.random = async (req, res) => {
   try {
-    res.send("hi this is random");
+    res.send({
+      message: "hi this is random",
+    });
   } catch (error) {
     console.log("random controller problem");
   }

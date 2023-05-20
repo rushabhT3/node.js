@@ -22,7 +22,7 @@ router.delete(
   userauthentication.authenticate,
   controller.deleteExpense
 );
-
+// router.post("password/forgotpassword", controller.forgotPassword);
 router.get("/random", controller.random);
 
 module.exports = router;
