@@ -39,11 +39,12 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const foundUser = await User.findOne({ where: { email } });
+    console.log({ foundUser: foundUser, email: email });
     if (foundUser) {
       // ? compare with the hash with the non hash value and callback me error k baad result hain and result != res
       bcrypt.compare(password, foundUser.password, (error, result) => {
         if (result) {
-          // console.log({ foundUser });
+          console.log({ result: result });
           res.status(200).json({
             message: "Successfully Logged In",
             token: generateAccessToken(
@@ -53,11 +54,11 @@ exports.login = async (req, res) => {
             ),
           });
         } else {
-          res.json({ message: "Password is wrong" });
+          res.status(403).json({ message: "Password is wrong" });
         }
       });
     } else {
-      res.json({ message: "User not found in table" });
+      res.status(404).json({ message: "User not found in table" });
     }
   } catch (error) {
     console.log("login error");
