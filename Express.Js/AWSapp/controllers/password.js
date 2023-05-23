@@ -124,8 +124,6 @@ const resetpassword = async (req, res) => {
 const updatepassword = async (req, res) => {
   try {
     const { newpassword } = req.query;
-    console.log({ here: newpassword });
-
     const { resetpasswordid } = req.params;
     resetpasswordrequest = await Forgotpassword.findOne({
       where: { id: resetpasswordid },
@@ -133,10 +131,8 @@ const updatepassword = async (req, res) => {
     const user = await User.findOne({
       where: { id: resetpasswordrequest.UserId },
     });
-    // console.log({'userDetails', user})
     if (user) {
       //encrypt the password
-
       const saltRounds = 10;
       bcrypt.genSalt(saltRounds, function (err, salt) {
         if (err) {

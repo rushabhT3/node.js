@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (ispremiumuser) {
     showPremiumuserMessage();
     showLeaderboard();
+    showDownloadBtn();
+    showPeriodicBtn();
   }
 });
 
@@ -45,6 +47,7 @@ async function dailyExpense(event) {
     headers: { Authorization: token },
   });
   event.target.reset();
+  // console.log(response);
   onScreenFunction(response.data);
 }
 
@@ -67,7 +70,7 @@ function showPremiumuserMessage() {
 
 function showLeaderboard() {
   const button = document.createElement("button");
-  button.type = "button";
+  // button.type = "button";
   button.textContent = "Show Leaderboard";
   button.addEventListener("click", handleLeaderboardClick);
 
@@ -104,6 +107,60 @@ async function handleLeaderboardClick() {
   } catch (error) {
     console.log("Error fetching leaderboard data:", error);
   }
+}
+
+function showDownloadBtn() {
+  const button = document.createElement("button");
+  button.textContent = "Download Expense";
+  button.addEventListener("click", handleDownloadClick);
+
+  const downloadBtn = document.getElementById("downloadexpense");
+  downloadBtn.appendChild(button);
+}
+
+async function handleDownloadClick() {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get("http://localhost:3000/user/download", {
+      headers: { Authorization: token },
+    });
+    if (response.status === 201) {
+      //the BE is essentially sending a download link
+      //  which if we open in browser, the file would download
+      var a = document.createElement("a");
+      a.href = response.data.fileUrl;
+      a.download = "myexpense.csv";
+      a.click();
+    } else {
+      throw new Error(response.data.message);
+    }
+  } catch (error) {
+    console.log({ handledownload: error });
+  }
+}
+
+function showPeriodicBtn() {
+  const button = document.createElement("button");
+  button.textContent = "Show Periodic Analysis";
+  button.addEventListener("click", handlePeriodicClick);
+
+  const periodicBtn = document.getElementById("periodic");
+  periodicBtn.appendChild(button);
+}
+
+async function handlePeriodicClick() {
+  const token = localStorage.getItem("token");
+  const response = await axios.get("", { headers: { Authorization: token } });
+
+  const periodicHtml = document.getElementById("periodic");
+
+  const table = document.getElementById("table");
+  if (table) {
+    periodicHtml.removeChild(table);
+  }
+
+  const newTable = document.createElement("table");
+  newTable.setAttribute("id", "table");
 }
 
 async function onScreenFunction(expense) {

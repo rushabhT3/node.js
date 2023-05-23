@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const foundUser = await User.findOne({ where: { email } });
-    console.log({ foundUser: foundUser, email: email });
+    // console.log({ foundUser: foundUser, email: email });
     if (foundUser) {
       // ? compare with the hash with the non hash value and callback me error k baad result hain and result != res
       bcrypt.compare(password, foundUser.password, (error, result) => {
