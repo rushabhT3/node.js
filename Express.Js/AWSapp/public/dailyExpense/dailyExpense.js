@@ -51,118 +51,6 @@ async function dailyExpense(event) {
   onScreenFunction(response.data);
 }
 
-function showPremiumuserMessage() {
-  const button = document.getElementById("rzp-button1");
-
-  const text = document.createTextNode("You are a premium user");
-
-  const crownIcon = document.createElement("i");
-  crownIcon.classList.add("fas", "fa-crown");
-  crownIcon.style.marginLeft = "5px";
-
-  button.innerHTML = ""; // Clear existing content.
-  button.appendChild(text);
-  button.appendChild(crownIcon);
-
-  // Remove event listener
-  button.onclick = null;
-}
-
-function showLeaderboard() {
-  const button = document.createElement("button");
-  // button.type = "button";
-  button.textContent = "Show Leaderboard";
-  button.addEventListener("click", handleLeaderboardClick);
-
-  const ldrBtn = document.getElementById("leaderboard");
-  ldrBtn.appendChild(button);
-}
-
-async function handleLeaderboardClick() {
-  try {
-    const token = localStorage.getItem("token");
-    const leaderBoardBEData = await axios.get(
-      "http://localhost:3000/premium/showLeaderBoard",
-      { headers: { Authorization: token } }
-    );
-    const leaderboardHtml = document.getElementById("leaderboard");
-
-    // ? check kr rhe leaderbrd list hain ya nahi
-    const leaderboardList = document.getElementById("leaderboardList");
-    if (leaderboardList) {
-      leaderboardHtml.removeChild(leaderboardList);
-    }
-
-    // ? nahi hain toh bana rhe and uppr me existing check kr rhe jo yaha pr bani hogi
-    const newLeaderboardList = document.createElement("ul");
-    newLeaderboardList.setAttribute("id", "leaderboardList");
-    newLeaderboardList.innerHTML = "<h1>Leader Board</h1>";
-
-    leaderBoardBEData.data.forEach((element) => {
-      newLeaderboardList.innerHTML += `<li>Name - ${
-        element.name
-      }     Total Expense - ${element.total_cost || 0}</li>`;
-    });
-    leaderboardHtml.appendChild(newLeaderboardList);
-  } catch (error) {
-    console.log("Error fetching leaderboard data:", error);
-  }
-}
-
-function showDownloadBtn() {
-  const button = document.createElement("button");
-  button.textContent = "Download Expense";
-  button.addEventListener("click", handleDownloadClick);
-
-  const downloadBtn = document.getElementById("downloadexpense");
-  downloadBtn.appendChild(button);
-}
-
-async function handleDownloadClick() {
-  try {
-    const token = localStorage.getItem("token");
-    const response = await axios.get("http://localhost:3000/user/download", {
-      headers: { Authorization: token },
-    });
-    if (response.status === 201) {
-      //the BE is essentially sending a download link
-      //  which if we open in browser, the file would download
-      var a = document.createElement("a");
-      a.href = response.data.fileUrl;
-      a.download = "myexpense.csv";
-      a.click();
-    } else {
-      throw new Error(response.data.message);
-    }
-  } catch (error) {
-    console.log({ handledownload: error });
-  }
-}
-
-function showPeriodicBtn() {
-  const button = document.createElement("button");
-  button.textContent = "Show Periodic Analysis";
-  button.addEventListener("click", handlePeriodicClick);
-
-  const periodicBtn = document.getElementById("periodic");
-  periodicBtn.appendChild(button);
-}
-
-async function handlePeriodicClick() {
-  const token = localStorage.getItem("token");
-  const response = await axios.get("", { headers: { Authorization: token } });
-
-  const periodicHtml = document.getElementById("periodic");
-
-  const table = document.getElementById("table");
-  if (table) {
-    periodicHtml.removeChild(table);
-  }
-
-  const newTable = document.createElement("table");
-  newTable.setAttribute("id", "table");
-}
-
 async function onScreenFunction(expense) {
   const token = localStorage.getItem("token");
 
@@ -190,6 +78,135 @@ async function onScreenFunction(expense) {
 
   li.appendChild(delBtn);
   ul2.appendChild(li);
+}
+
+function showPremiumuserMessage() {
+  const button = document.getElementById("rzp-button1");
+
+  const text = document.createTextNode("You are a premium user");
+
+  const crownIcon = document.createElement("i");
+  crownIcon.classList.add("fas", "fa-crown");
+  crownIcon.style.marginLeft = "5px";
+
+  button.innerHTML = ""; // Clear existing content.
+  button.appendChild(text);
+  button.appendChild(crownIcon);
+
+  // Remove event listener
+  button.onclick = null;
+}
+
+// !  leaderboard
+function showLeaderboard() {
+  const button = document.createElement("button");
+  // button.type = "button";
+  button.textContent = "Show Leaderboard";
+  button.classList.add("nice-button");
+  button.addEventListener("click", handleLeaderboardClick);
+
+  const ldrBtn = document.getElementById("leaderboard");
+  ldrBtn.appendChild(button);
+}
+
+async function handleLeaderboardClick() {
+  try {
+    const token = localStorage.getItem("token");
+    const leaderBoardBEData = await axios.get(
+      "http://localhost:3000/premium/showLeaderBoard",
+      { headers: { Authorization: token } }
+    );
+    const leaderboardHtml = document.getElementById("leaderboard");
+
+    // Check if the leaderboard list already exists
+    const leaderboardList = document.getElementById("leaderboardList");
+    if (leaderboardList) {
+      leaderboardHtml.removeChild(leaderboardList);
+    }
+
+    // Create a new leaderboard list
+    const newLeaderboardList = document.createElement("ul");
+    newLeaderboardList.setAttribute("id", "leaderboardList");
+    newLeaderboardList.innerHTML = "<h3>Leader Board</h3>";
+
+    leaderBoardBEData.data.forEach((element, index) => {
+      const listItem = document.createElement("li");
+      listItem.classList.add("leaderboard-item"); // ? CSS modifications
+
+      const name = document.createElement("span"); // ? CSS modifications
+      name.classList.add("leaderboard-name"); // ? CSS modifications
+      name.textContent = element.name; // ? CSS modifications
+
+      const totalExpense = document.createElement("span"); // ? CSS modifications
+      totalExpense.classList.add("leaderboard-total-expense"); // ? CSS modifications
+      totalExpense.textContent = `Total Expense: ${element.total_cost || 0}`;
+
+      listItem.appendChild(name);
+      listItem.appendChild(totalExpense);
+      newLeaderboardList.appendChild(listItem);
+    });
+
+    leaderboardHtml.appendChild(newLeaderboardList);
+  } catch (error) {
+    console.log("Error fetching leaderboard data:", error);
+  }
+}
+
+// ! Download
+function showDownloadBtn() {
+  const button = document.createElement("button");
+  button.textContent = "Download Expense";
+  button.classList.add("nice-button");
+  button.addEventListener("click", handleDownloadClick);
+
+  const downloadBtn = document.getElementById("downloadexpense");
+  downloadBtn.appendChild(button);
+}
+
+async function handleDownloadClick() {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get("http://localhost:3000/download", {
+      headers: { Authorization: token },
+    });
+    if (response.status === 200) {
+      //the BE is essentially sending a download link
+      var a = document.createElement("a");
+      a.href = response.data.fileURL;
+      a.download = "myexpense.csv";
+      a.click();
+    } else {
+      throw new Error(response.data.message);
+    }
+  } catch (error) {
+    console.log({ handledownloadFE: error });
+  }
+}
+
+// ! Periodic table
+function showPeriodicBtn() {
+  const button = document.createElement("button");
+  button.textContent = "Show Periodic Analysis";
+  button.classList.add("nice-button");
+  button.addEventListener("click", handlePeriodicClick);
+
+  const periodicBtn = document.getElementById("periodic");
+  periodicBtn.appendChild(button);
+}
+
+async function handlePeriodicClick() {
+  const token = localStorage.getItem("token");
+  const response = await axios.get("", { headers: { Authorization: token } });
+
+  const periodicHtml = document.getElementById("periodic");
+
+  const table = document.getElementById("table");
+  if (table) {
+    periodicHtml.removeChild(table);
+  }
+
+  const newTable = document.createElement("table");
+  newTable.setAttribute("id", "table");
 }
 
 document.getElementById("rzp-button1").onclick = async function (e) {

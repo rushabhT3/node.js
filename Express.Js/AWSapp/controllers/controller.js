@@ -5,8 +5,11 @@ const sequelize = require("../util/database");
 
 const User = require("../models/users");
 const dailyExpense = require("../models/expense");
+const URL = require("../models/url");
 
-exports.signUp = async (req, res) => {
+const { uploadToS3 } = require("../Services/s3services");
+
+const signUp = async (req, res) => {
   // const { name, email, password } = req.body;
   // await User.create({ name, email, password });
   // res.status(201).json({ message: "Successfully created new user:)" });
@@ -27,15 +30,11 @@ exports.signUp = async (req, res) => {
   }
 };
 
-generateAccessToken = (id, name, ispremiumuser) => {
+const generateAccessToken = (id, name, ispremiumuser) => {
   return jwt.sign({ jwtId: id, name: name, ispremiumuser }, "secretkey2");
 };
 
-exports.generateAccessToken = (id, name, ispremiumuser) => {
-  return jwt.sign({ jwtId: id, name: name, ispremiumuser }, "secretkey2");
-};
-
-exports.login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const foundUser = await User.findOne({ where: { email } });
@@ -66,7 +65,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.postdailyExpense = async (req, res) => {
+const postdailyExpense = async (req, res) => {
   // ! sequelize transaction basically checkpost jaisa sequelize hamara database util me se
   // ? const t try k bahar hoga nhi toh error me usko access ni kr paayenge
   const t = await sequelize.transaction();
@@ -103,7 +102,7 @@ exports.postdailyExpense = async (req, res) => {
   }
 };
 
-exports.getdailyExpense = async (req, res) => {
+const getdailyExpense = async (req, res) => {
   try {
     const response = await dailyExpense.findAll({
       where: { UserId: req.authUser.id },
@@ -114,7 +113,7 @@ exports.getdailyExpense = async (req, res) => {
   }
 };
 
-exports.deleteExpense = async (req, res) => {
+const deleteExpense = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     // ? params are used to retrieve data from the URL, while body is used to retrieve data from the request.
@@ -150,7 +149,30 @@ exports.deleteExpense = async (req, res) => {
   }
 };
 
-exports.random = async (req, res) => {
+const downloadExpenses = async (req, res) => {
+  try {
+    const expenses = await dailyExpense.findAll({
+      where: { UserId: req.authUser.id },
+    });
+    // console.log({ controller_downloadExpense: expenses });
+    const stringifiedExpenses = JSON.stringify(expenses);
+    const UserId = req.authUser.id;
+    const filename = `Expense${UserId}/${new Date()}.txt`;
+    const fileURL = await uploadToS3(stringifiedExpenses, filename);
+
+    await URL.create(
+      { email: req.authUser.email, fileURL: fileURL },
+      { where: { email: req.authUser.email } }
+    );
+
+    res.status(200).json({ fileURL, success: true });
+  } catch (error) {
+    console.log({ downloadExpenses_controller_problem: error });
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+random = async (req, res) => {
   try {
     res.send({
       message: "hi this is random",
@@ -158,4 +180,15 @@ exports.random = async (req, res) => {
   } catch (error) {
     console.log("random controller problem");
   }
+};
+
+module.exports = {
+  signUp,
+  generateAccessToken,
+  login,
+  postdailyExpense,
+  getdailyExpense,
+  deleteExpense,
+  downloadExpenses,
+  random,
 };

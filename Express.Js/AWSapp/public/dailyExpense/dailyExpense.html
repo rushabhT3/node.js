@@ -136,6 +136,123 @@
             outline: 0;
         }
 
+        #downloadexpense,
+        #leaderboard,
+        #periodic {
+            background-color: #f9f9f9;
+            /* Updated background color */
+            border-radius: 8px;
+            /* Reduced border radius */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Adjusted box shadow */
+            padding: 15px;
+            /* Reduced padding */
+            margin-bottom: 15px;
+            /* Reduced margin */
+        }
+
+        #downloadexpense h3,
+        #leaderboard h3,
+        #periodic h3 {
+            border-bottom: 1px solid #ccc;
+            /* Lighter border color */
+            padding-bottom: 5px;
+            /* Reduced padding */
+            margin-bottom: 15px;
+            /* Reduced margin */
+        }
+
+        #downloadexpense .file-link,
+        #leaderboard .user-list,
+        #periodic .periodic-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #downloadexpense .file-link li,
+        #leaderboard .user-list li,
+        #periodic .periodic-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            /* Reduced padding */
+            margin-bottom: 8px;
+            /* Reduced margin */
+            background-color: #f7f7f7;
+            /* Lighter background color */
+            border-radius: 4px;
+            /* Reduced border radius */
+        }
+
+        #downloadexpense .file-link li:last-child,
+        #leaderboard .user-list li:last-child,
+        #periodic .periodic-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        #downloadexpense .file-link .file-name,
+        #leaderboard .user-list .user-name,
+        #periodic .periodic-list .periodic-item {
+            font-weight: bold;
+        }
+
+        #downloadexpense .file-link .file-url,
+        #leaderboard .user-list .user-points,
+        #periodic .periodic-list .periodic-frequency {
+            color: #666;
+            /* Adjusted text color */
+        }
+
+        .nice-button {
+            background-color: #5cb85c;
+            /* Updated button color */
+            color: #fff;
+            padding: 8px 16px;
+            /* Adjusted padding */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 8px;
+            /* Reduced margin */
+        }
+
+        .nice-button:hover {
+            background-color: #4cae4c;
+            /* Darker hover color */
+        }
+
+        #leaderboardList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .leaderboard-name {
+            font-weight: bold;
+        }
+
+        .leaderboard-total-expense {
+            color: #555;
+        }
+
+
+
         .list {
             list-style-type: none;
             padding: 0;
