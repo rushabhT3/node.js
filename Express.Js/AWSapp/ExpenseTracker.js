@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const port = 3000;
+const app = express();
 
 const routes = require("./routes/router");
 const purchaseRoutes = require("./routes/razorpayroutes");
@@ -14,10 +15,8 @@ const dailyExpense = require("./models/expense");
 const Order = require("./models/orders");
 const Forgotpassword = require("./models/password");
 
-const app = express();
-
-const dotenv = require("dotenv");
-dotenv.config();
+// const dotenv = require("dotenv");
+// dotenv.config();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

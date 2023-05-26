@@ -16,13 +16,6 @@ function parseJwt(token) {
 document.addEventListener("DOMContentLoaded", async () => {
   const token = localStorage.getItem("token");
   const decodeToken = parseJwt(token);
-  // console.log(decodeToken);
-  const response = await axios.get("http://localhost:3000/dailyExpense", {
-    headers: { Authorization: token },
-  });
-  response.data.forEach((element) => {
-    onScreenFunction(element);
-  });
   const ispremiumuser = decodeToken.ispremiumuser;
   // console.log({ decodeToken, ispremiumuser });
   if (ispremiumuser) {
@@ -31,6 +24,46 @@ document.addEventListener("DOMContentLoaded", async () => {
     showDownloadBtn();
     showPeriodicBtn();
   }
+  let currentPage = 1;
+
+  async function getExpenses(page) {
+    const limit = document.querySelector("#limit").value;
+
+    // ? Using {data} instead of response.data
+    const { data } = await axios.get(
+      `http://localhost:3000/dailyExpense?page=${page}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    document.querySelector("#list").innerHTML = "";
+
+    data.expenses.forEach((element) => {
+      onScreenFunction(element);
+    });
+
+    document.querySelector("#limit").addEventListener("change", () => {
+      getExpenses(currentPage);
+    });
+    document.querySelector("#currentPage").textContent = data.currentPage;
+    document.querySelector("#prevPageBtn").disabled = data.currentPage === 1;
+    document.querySelector("#nextPageBtn").disabled =
+      data.currentPage === data.totalPages;
+  }
+
+  getExpenses(currentPage);
+
+  document.querySelector("#prevPageBtn").addEventListener("click", () => {
+    currentPage--;
+    getExpenses(currentPage);
+  });
+  document.querySelector("#nextPageBtn").addEventListener("click", () => {
+    currentPage++;
+    getExpenses(currentPage);
+  });
 });
 
 async function dailyExpense(event) {
@@ -135,7 +168,7 @@ async function handleLeaderboardClick() {
 
       const name = document.createElement("span"); // ? CSS modifications
       name.classList.add("leaderboard-name"); // ? CSS modifications
-      name.textContent = element.name; // ? CSS modifications
+      name.textContent = element.name;
 
       const totalExpense = document.createElement("span"); // ? CSS modifications
       totalExpense.classList.add("leaderboard-total-expense"); // ? CSS modifications

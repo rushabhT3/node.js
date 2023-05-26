@@ -328,8 +328,23 @@
         <div id="periodic"></div>
 
         <h3>History</h3>
-        <ul id="list" class="list">
-        </ul>
+        <label for="limit">Items per page:</label>
+        <select id="limit">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+        </select>
+
+        <div id="pagination">
+            <button id="prevPageBtn" class="btn-pagination" disabled>
+                Previous Page
+            </button>
+            <span id="currentPage">1</span>
+            <button id="nextPageBtn" class="btn-pagination">
+                Next Page
+            </button>
+        </div>
+        <ul id="list" class="list"></ul>
 
         <h3>Add new transaction</h3>
         <form id="form" onsubmit="dailyExpense(event)">
@@ -339,7 +354,7 @@
             </div>
             <div class="form-control">
                 <label for="description">Description </label>
-                <input type="text" id="description" name='description'
+                <input type="text" id="description" name="description"
                     placeholder="Enter description for transaction..." required />
             </div>
             <div class="form-control">
@@ -352,6 +367,7 @@
             </div>
             <button class="btn" type="submit">Add transaction</button>
         </form>
+
 
     </div>
 

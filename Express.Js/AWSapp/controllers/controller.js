@@ -104,10 +104,23 @@ const postdailyExpense = async (req, res) => {
 
 const getdailyExpense = async (req, res) => {
   try {
-    const response = await dailyExpense.findAll({
+    // ? how many to skip before starting to look. For example, if you have an offset of 10, you would skip the first 10 and start looking from the 11th.
+    const page = req.query.page || 1;
+    const limit = +req.query.limit || 10;
+    const offset = (page - 1) * limit;
+
+    const response = await dailyExpense.findAndCountAll({
       where: { UserId: req.authUser.id },
+      limit,
+      offset,
     });
-    res.json(response);
+
+    res.json({
+      expenses: response.rows,
+      // ? Math.ceil() rounds a number up to the nearest integer >= that value
+      totalPages: Math.ceil(response.count / limit),
+      currentPage: page,
+    });
   } catch (error) {
     console.log("error in getdailyexpense controller");
   }
@@ -172,7 +185,7 @@ const downloadExpenses = async (req, res) => {
   }
 };
 
-random = async (req, res) => {
+const random = async (req, res) => {
   try {
     res.send({
       message: "hi this is random",

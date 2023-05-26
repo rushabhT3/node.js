@@ -8,7 +8,7 @@ router.post("/user/signup", controller.signUp);
 router.post("/user/login", controller.login);
 
 router.get(
-  "/dailyExpense",
+  "/dailyExpense/",
   userauthentication.authenticate,
   controller.getdailyExpense
 );
