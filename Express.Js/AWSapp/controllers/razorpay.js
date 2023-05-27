@@ -42,9 +42,6 @@ const updateTransactionStatus = async (req, res) => {
       status: "SUCCESSFUL",
     });
     const promise2 = req.authUser.update({ ispremiumuser: true });
-    // console.log(
-    //   "fklsdfjhfsdjnfljfdnsdfnfkdjsnfdjdfnjldfnfdlkdfnanalnlkdfsndfskfnfdnansdfalndfslfna"
-    // );
 
     Promise.all([promise1, promise2]).then(() => {
       return res.status(202).json({

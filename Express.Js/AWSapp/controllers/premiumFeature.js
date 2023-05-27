@@ -1,7 +1,7 @@
 const User = require("../models/users");
-const dailyExpense = require("../models/expense");
-const sequelize = require("../util/database");
-const express = require("express");
+// const dailyExpense = require("../models/expense");
+// const sequelize = require("../util/database");
+// const express = require("express");
 
 const getUserLeaderBoard = async (req, res) => {
   try {

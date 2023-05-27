@@ -106,7 +106,7 @@ const getdailyExpense = async (req, res) => {
   try {
     // ? how many to skip before starting to look. For example, if you have an offset of 10, you would skip the first 10 and start looking from the 11th.
     const page = req.query.page || 1;
-    const limit = +req.query.limit || 10;
+    const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
     const response = await dailyExpense.findAndCountAll({
@@ -178,7 +178,11 @@ const downloadExpenses = async (req, res) => {
       { where: { email: req.authUser.email } }
     );
 
-    res.status(200).json({ fileURL, success: true });
+    const urls = await URL.findAll();
+    const fileURLs = urls.map((url) => url.fileURL);
+    console.log({ URL: fileURLs });
+
+    res.status(200).json({ fileURLs, success: true });
   } catch (error) {
     console.log({ downloadExpenses_controller_problem: error });
     res.status(500).json({ message: "Internal server error" });

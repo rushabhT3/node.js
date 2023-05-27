@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     showPremiumuserMessage();
     showLeaderboard();
     showDownloadBtn();
-    showPeriodicBtn();
+    // showPeriodicBtn();
   }
   let currentPage = 1;
 
@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const limit = document.querySelector("#limit").value;
 
     // ? Using {data} instead of response.data
+    // ? limit is the items per page
     const { data } = await axios.get(
       `http://localhost:3000/dailyExpense?page=${page}&limit=${limit}`,
       {
@@ -38,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
       }
     );
-
+    console.log(data);
     document.querySelector("#list").innerHTML = "";
 
     data.expenses.forEach((element) => {
@@ -202,45 +203,57 @@ async function handleDownloadClick() {
     const response = await axios.get("http://localhost:3000/download", {
       headers: { Authorization: token },
     });
+    // console.log(response.data.fileURLs);
     if (response.status === 200) {
       //the BE is essentially sending a download link
       var a = document.createElement("a");
-      a.href = response.data.fileURL;
+      a.href = response.data.fileURLs[response.data.fileURLs.length - 1];
       a.download = "myexpense.csv";
       a.click();
     } else {
       throw new Error(response.data.message);
     }
+    const downloadedFiles = document.getElementById("downloadedFiles");
+    response.data.fileURLs.forEach((element, index) => {
+      const listItem = document.createElement("li");
+
+      const link = document.createElement("a");
+      link.href = element;
+      link.textContent = `Download Previous Link ${index + 1}`;
+      listItem.appendChild(link);
+
+      downloadedFiles.appendChild(listItem);
+    });
   } catch (error) {
     console.log({ handledownloadFE: error });
   }
 }
 
 // ! Periodic table
-function showPeriodicBtn() {
-  const button = document.createElement("button");
-  button.textContent = "Show Periodic Analysis";
-  button.classList.add("nice-button");
-  button.addEventListener("click", handlePeriodicClick);
+// function showPeriodicBtn() {
+//   const button = document.createElement("button");
+//   button.textContent = "Show Periodic Analysis";
+//   button.classList.add("nice-button");
+//   button.addEventListener("click", handlePeriodicClick);
 
-  const periodicBtn = document.getElementById("periodic");
-  periodicBtn.appendChild(button);
-}
+//   const periodicBtn = document.getElementById("periodic");
+//   periodicBtn.appendChild(button);
+// }
 
-async function handlePeriodicClick() {
-  const token = localStorage.getItem("token");
-  const response = await axios.get("", { headers: { Authorization: token } });
+// async function handlePeriodicClick() {
+//   const token = localStorage.getItem("token");
+//   const response = await axios.get("", { headers: { Authorization: token } });
 
-  const periodicHtml = document.getElementById("periodic");
+//   const periodicHtml = document.getElementById("periodic");
 
-  const table = document.getElementById("table");
-  if (table) {
-    periodicHtml.removeChild(table);
-  }
+//   const table = document.getElementById("table");
+//   if (table) {
+//     periodicHtml.removeChild(table);
+//   }
 
-  const newTable = document.createElement("table");
-  newTable.setAttribute("id", "table");
-}
+//   const newTable = document.createElement("table");
+//   newTable.setAttribute("id", "table");
+// }
 
 document.getElementById("rzp-button1").onclick = async function (e) {
   try {
