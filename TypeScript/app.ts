@@ -27,5 +27,5 @@ buttonElement.addEventListener('click', () => {
 console.log(add(1, 6));
 
 // https://stackoverflow.com/questions/76195252/typescript-compiler-giving-error-redeclare-block-scoped-variable-but-it-is-not-r
-export {}
+// export {}
 
