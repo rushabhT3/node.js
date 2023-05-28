@@ -4,7 +4,7 @@ const num2Element = document.getElementById('num2') as HTMLInputElement;
 // ? strict mode tsc init: using the "!" is telling it will be a not null value, solves error of buttonElement line 9
 const buttonElement = document.querySelector('button')!;
 
-const numResults: number[] = [];
+const numResults: Array<number> = [];
 const textResults: string[] = [];
 
 // TS feature: to combine the types 
@@ -44,6 +44,17 @@ buttonElement.addEventListener('click', () => {
     console.log(numResults, textResults);
 })
 
-// https://stackoverflow.com/questions/76195252/typescript-compiler-giving-error-redeclare-block-scoped-variable-but-it-is-not-r
-// export {}
+const myPromise = new Promise<string>((resolve, reject) => {
+    setTimeout(() => {
+    const success = true;
+    if (success) {
+      resolve('It worked!');
+    } else {
+      reject('Not worked!');
+    }
+    }, 1000);
+})
 
+myPromise.then((result) => {
+    console.log(result.split('w'));
+})

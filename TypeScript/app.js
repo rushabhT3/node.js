@@ -27,5 +27,12 @@ buttonElement.addEventListener('click', function () {
     printResult({ val: result, timestamp: new Date() });
     console.log(numResults, textResults);
 });
-// https://stackoverflow.com/questions/76195252/typescript-compiler-giving-error-redeclare-block-scoped-variable-but-it-is-not-r
-// export {}
+var myPromise = new Promise(function (resolve, reject) {
+    setTimeout(function () {
+        resolve('It worked!');
+        reject('not worked');
+    }, 1000);
+});
+myPromise.then(function (result) {
+    console.log(result.split('w'));
+});
