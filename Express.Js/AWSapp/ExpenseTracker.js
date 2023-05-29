@@ -6,8 +6,8 @@ const fs = require("fs");
 const path = require("path");
 const morgan = require("morgan");
 
-const dotenv = require("dotenv");
-dotenv.config();
+// const dotenv = require("dotenv");
+// dotenv.config();
 
 const routes = require("./routes/router");
 const purchaseRoutes = require("./routes/razorpayroutes");
