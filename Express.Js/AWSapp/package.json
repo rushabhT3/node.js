@@ -19,8 +19,12 @@
   "description": "Learning and implementing from scratch",
   "main": "app.js",
   "scripts": {
+    "start": "nodemon ExpenseTracker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Rushabh",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
 }
