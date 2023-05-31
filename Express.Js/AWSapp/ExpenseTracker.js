@@ -37,10 +37,10 @@ app.use("/premium", premiumFeatureRoutes);
 app.use("/password", PasswordRoutes);
 app.use("/", routes);
 
-app.use((req, res) => {
-  console.log("urlll", req.url);
-  res.sendFile(path.join(__dirname, `public/${req.url}`));
-});
+// app.use((req, res) => {
+//   console.log("urlll", req.url);
+//   res.sendFile(path.join(__dirname, `public/${req.url}`));
+// });
 
 User.hasMany(dailyExpense);
 dailyExpense.belongsTo(User);
